@@ -1,0 +1,8 @@
+hibernate.ddl-auto.mode: validate
+
+spring:
+  dataSource:
+    url: jdbc:mysql://localhost:3306/test_blog?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+    username: root
+    password: zaqwsx
+    driver-class-name: com.mysql.cj.jdbc.Driver
