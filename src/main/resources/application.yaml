@@ -1,4 +1,4 @@
-hibernate.ddl-auto.mode: validate
+hibernate.ddl-auto.mode: create-drop
 
 spring:
   datasource:

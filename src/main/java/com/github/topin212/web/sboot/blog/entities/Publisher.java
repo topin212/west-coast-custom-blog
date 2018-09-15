@@ -21,6 +21,21 @@ public class Publisher {
     @Column(name = "reg_date")
     private LocalDateTime registrationDate;
 
+    @Column(name = "role_id")
+    private Long role_id;
+
+    @Column
+    private String token;
+
+    public Publisher() {}
+
+    public Publisher(String name, String password) {
+        this.name = name;
+        this.passwordHash = password;
+        this.setRegistrationDate(LocalDateTime.now());
+        this.role_id = 1L;
+    }
+
     public Long getId() {
         return id;
     }
@@ -51,5 +66,21 @@ public class Publisher {
 
     public void setRegistrationDate(LocalDateTime registrationDate) {
         this.registrationDate = registrationDate;
+    }
+
+    public Long getRole_id() {
+        return role_id;
+    }
+
+    public void setRole_id(Long role_id) {
+        this.role_id = role_id;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

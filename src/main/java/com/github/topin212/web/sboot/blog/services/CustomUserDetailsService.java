@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Service
 @Transactional
 public class CustomUserDetailsService implements UserDetailsService {
@@ -24,9 +23,9 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        Publisher p = publisherService.getPublisherByName(login);
+        Publisher publisher = publisherService.getPublisherByName(login);
 
-        if(p == null) {
+        if(publisher == null) {
             throw new UsernameNotFoundException("User " + login + " is not known.");
         }
 
@@ -34,6 +33,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         roles.add(new SimpleGrantedAuthority("ROLE_PUBLISHER"));
 
-        return new User(p.getName(), p.getPasswordHash(), roles);
+        return new User(publisher.getName(), publisher.getPasswordHash(), roles);
     }
 }

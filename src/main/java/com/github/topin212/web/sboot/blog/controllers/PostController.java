@@ -2,11 +2,13 @@ package com.github.topin212.web.sboot.blog.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.topin212.web.sboot.blog.entities.Post;
+import com.github.topin212.web.sboot.blog.entities.BlogPost;
 import com.github.topin212.web.sboot.blog.entities.Publisher;
 import com.github.topin212.web.sboot.blog.services.PostService;
 import com.github.topin212.web.sboot.blog.services.PublisherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,7 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/post")
 public class PostController {
 
     private final PostService postService;
@@ -31,105 +33,136 @@ public class PostController {
         this.publisherService = publisherService;
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/get/{id}", method = RequestMethod.GET)
-    public String getPostById(@PathVariable Long id) throws JsonProcessingException {
-        Post postById = postService.getPostById(id);
+    @RequestMapping(method = RequestMethod.GET, params = {"page", "limit"}, produces = "application/json")
+    public String getPostById(
+            @RequestParam int page,
+            @RequestParam int limit
+    ) throws JsonProcessingException {
 
-        return mapper.writeValueAsString(postById);
+        System.out.println(page);
+        System.out.println(limit);
+
+        Page<BlogPost> allPostsInPageable = postService.getAllPostsInPageable(PageRequest.of(page, limit));
+
+        return mapper.writeValueAsString(allPostsInPageable);
     }
 
-    //TODO add pagination
-    @ResponseBody
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, params = {"page", "limit", "publisher_id"}, produces = "application/json")
+    public String getPostById(
+            @RequestParam int page,
+            @RequestParam int limit,
+            @RequestParam("publisher_id") Publisher publisher
+    ) throws JsonProcessingException {
+
+        System.out.println(page);
+        System.out.println(limit);
+        System.out.println(publisher.getName());
+
+        Page<BlogPost> allPostsInPageable = postService.
+                getPostsByPublisherWithPageable(
+                        publisher,
+                        PageRequest.of(page, limit));
+
+        return mapper.writeValueAsString(allPostsInPageable);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
+    public String getPostById(@PathVariable("id") BlogPost blogPost) throws JsonProcessingException {
+        return mapper.writeValueAsString(blogPost);
+    }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     public ResponseEntity<String> getAllPosts() throws JsonProcessingException {
-        List<Post> all = postService.getAllPosts();
+        List<BlogPost> all = postService.getAllPosts();
 
         return new ResponseEntity<>(mapper.writeValueAsString(all), HttpStatus.OK);
     }
 
-    @ResponseBody
     @RequestMapping(value = "/publisher", method = RequestMethod.GET)
     public ResponseEntity<String> getPostsByCurrentPublisher() throws JsonProcessingException {
-        List<Post> all = postService.getPostsByPublisher(getCurrentPublisher());
+        List<BlogPost> all = postService.getPostsByPublisher(getCurrentPublisher());
 
         return new ResponseEntity<>(mapper.writeValueAsString(all), HttpStatus.OK);
     }
 
     @ResponseBody
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public ResponseEntity<String> createAPost(@RequestParam String postTitle, @RequestParam String postText){
-        Post post = new Post();
+    @RequestMapping(method = RequestMethod.PUT)
+    public ResponseEntity<String> createAPost(@RequestParam String postTitle, @RequestParam String postText) {
+        BlogPost blogPost = new BlogPost();
 
         Publisher publisher = getCurrentPublisher();
 
-        post.setPublisher(publisher);
-        post.setPostTitle(postTitle);
-        post.setPostText(postText);
-        post.setPostDate(LocalDateTime.now());
-        post.setLikeCount(0);
+        blogPost.setPublisher(publisher);
+        blogPost.setPostTitle(postTitle);
+        blogPost.setPostText(postText);
+        blogPost.setPostDate(LocalDateTime.now());
+        blogPost.setThumbsUpCount(0);
 
-        postService.addPost(post);
+        postService.addOrUpdate(blogPost);
         return null;
     }
 
-    @ResponseBody
     @RequestMapping(value = "/own", method = RequestMethod.GET)
     public ResponseEntity<String> getOwnPosts() throws JsonProcessingException {
-
-        List<Post> postsByPublisher = postService.getPostsByPublisher(getCurrentPublisher());
+        List<BlogPost> postsByPublisher = postService.getPostsByPublisher(getCurrentPublisher());
 
         return new ResponseEntity<>(mapper.writeValueAsString(postsByPublisher), HttpStatus.OK);
     }
 
-    @ResponseBody
-    @RequestMapping(value="/update", method = RequestMethod.POST)
-    public ResponseEntity<String> updatePost(@RequestParam Long postId,
-                                             @RequestParam String postTitle,
-                                             @RequestParam String postText){
+    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+    public ResponseEntity<String> updatePost(
+            @RequestParam Long postId,
+            @RequestParam String postTitle,
+            @RequestParam String postText
+    ) {
         Publisher currentUser = getCurrentPublisher();
 
-        Post post = postService.getPostById(postId);
+        BlogPost blogPost = postService.getPostById(postId);
 
-        if(!currentUser.equals(post.getPublisher())){
-            return new ResponseEntity<>("You are not authorized to edit this post", HttpStatus.UNAUTHORIZED);
+        if (!currentUser.equals(blogPost.getPublisher())) {
+            return new ResponseEntity<>("You are not authorized to edit this blogPost", HttpStatus.UNAUTHORIZED);
         }
 
-        post.setPostTitle(postTitle);
-        post.setPostText(postText);
+        blogPost.setPostTitle(postTitle);
+        blogPost.setPostText(postText);
 
-        post.setPostDate(LocalDateTime.now());
+        blogPost.setPostDate(LocalDateTime.now());
 
-        postService.update(post);
+        postService.addOrUpdate(blogPost);
 
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
-    @ResponseBody
-    @RequestMapping(value="/remove/{postId}", method = RequestMethod.DELETE)
-    public ResponseEntity<String> deletePost(@PathVariable Long postId){
-        Post post = postService.getPostById(postId);
+    @RequestMapping(value = "/{postId}", method = RequestMethod.DELETE)
+    public ResponseEntity<String> deletePost(@PathVariable Long postId) {
+        BlogPost blogPost = postService.getPostById(postId);
 
         Publisher currentUser = getCurrentPublisher();
 
-        if(!currentUser.equals(post.getPublisher())){
-            return new ResponseEntity<>("You are not authorized to edit this post", HttpStatus.UNAUTHORIZED);
+        if (!currentUser.equals(blogPost.getPublisher())) {
+            return new ResponseEntity<>("You are not authorized to edit this blogPost", HttpStatus.UNAUTHORIZED);
         }
 
-        postService.removePost(post);
+        postService.deactivatePost(blogPost);
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 
-    @ResponseBody
-    @RequestMapping(value = "/thumbsup/{postid}")
-    public ResponseEntity<String> giveALike(@PathVariable("postid") Long postId){
-        if(postService.giveALike(postId))
+    @RequestMapping(value = "/thumbsup/{postid}", produces = "application/json")
+    public ResponseEntity<String> giveALike(@PathVariable("postid") Long postId) {
+        if (postService.giveALike(postId)) {
             return new ResponseEntity<>("success", HttpStatus.OK);
+        }
         return new ResponseEntity<>("fail", HttpStatus.BAD_REQUEST);
     }
 
-    private Publisher getCurrentPublisher(){
+    private Publisher getCurrentPublisher() {
         return publisherService.getPublisherByName(
                 SecurityContextHolder.getContext().getAuthentication().getName());
+    }
+
+    @RequestMapping(value = "/getSelf")
+    public String test() throws JsonProcessingException {
+        return mapper.writeValueAsString(publisherService.getPublisherByName(
+                SecurityContextHolder.getContext().getAuthentication().getName()));
     }
 }

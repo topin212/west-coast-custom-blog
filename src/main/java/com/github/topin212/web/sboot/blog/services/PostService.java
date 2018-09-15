@@ -1,11 +1,11 @@
 package com.github.topin212.web.sboot.blog.services;
 
-import com.github.topin212.web.sboot.blog.entities.Post;
+import com.github.topin212.web.sboot.blog.entities.BlogPost;
 import com.github.topin212.web.sboot.blog.entities.Publisher;
 import com.github.topin212.web.sboot.blog.repositories.PostRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,67 +13,55 @@ import java.util.List;
 @Service
 public class PostService {
 
-    PostRepository postRepository;
-
-    private static final Logger logger = LoggerFactory.getLogger(PostService.class);
+    private final PostRepository postRepository;
 
     @Autowired
     public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
     }
 
-    public Post getPostById(Long postId){
-        try{
-            if(!postRepository.existsById(postId)){
-                throw new IllegalArgumentException("Results for post id: " + postId + " not found");
-            }
-            Post post = postRepository.findById(postId).get();
-
-            return post;
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return null;
+    public BlogPost getPostById(Long postId){
+        if(!postRepository.existsById(postId)){
+            throw new IllegalArgumentException("Results for post id: " + postId + " not found");
         }
+
+        return postRepository.findById(postId).get();
     }
 
-    public boolean addPost(Post post){
-        return postRepository.save(post) != null;
+    public void addOrUpdate(BlogPost blogPost){
+        postRepository.save(blogPost);
     }
 
-    public boolean update(Post post){
-        return postRepository.save(post) != null;
-    }
-
-    public List<Post> getAllPosts(){
+    public List<BlogPost> getAllPosts(){
         return postRepository.findAll();
     }
 
-    public List<Post> getPostsByPublisher(Publisher publisher){
+    public Page<BlogPost> getAllPostsInPageable(Pageable pageable){
+        return postRepository.findAll(pageable);
+    }
+
+    public List<BlogPost> getPostsByPublisher(Publisher publisher){
         return postRepository.findByPublisher(publisher);
     }
 
-    //TODO refactor this
-    public boolean giveALike(Long postId){
-        try{
-            if(!postRepository.existsById(postId)){
-                throw new IllegalArgumentException("Results for post id: " + postId + " not found");
-            }
-            Post post = postRepository.findById(postId).get();
-
-            post.giveALike();
-            postRepository.save(post);
-
-            return true;
-        } catch (Throwable e) {
-            e.printStackTrace();
-            return false;
-        }
+    public Page<BlogPost> getPostsByPublisherWithPageable(Publisher publisher, Pageable pageable){
+        return postRepository.findByPublisher(publisher, pageable);
     }
 
-    public boolean removePost(Post post){
-        post.setDeleted(true);
-        postRepository.save(post);
+    public boolean giveALike(Long postId){
+        if(!postRepository.existsById(postId)){
+            throw new IllegalArgumentException("Results for blogPost id: " + postId + " not found");
+        }
+
+        BlogPost blogPost = postRepository.findById(postId).get();
+        blogPost.giveALike();
+        postRepository.save(blogPost);
+
         return true;
     }
 
+    public void deactivatePost(BlogPost blogPost){
+        blogPost.setActive(false);
+        postRepository.save(blogPost);
+    }
 }

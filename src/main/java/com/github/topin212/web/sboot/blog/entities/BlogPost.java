@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity(name = "post")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Post {
+public class BlogPost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,13 +25,13 @@ public class Post {
     @Column(name = "post_date")
     private LocalDateTime postDate;
     @Column(name = "like_count")
-    private long likeCount;
+    private long thumbsUpCount;
 
     @Column(name = "is_Deleted")
-    private boolean isDeleted;
+    private boolean isActive;
 
     public void giveALike(){
-        this.likeCount++;
+        this.thumbsUpCount++;
     }
 
     public Long getId() {
@@ -74,19 +74,19 @@ public class Post {
         this.postDate = postDate;
     }
 
-    public long getLikeCount() {
-        return likeCount;
+    public long getThumbsUpCount() {
+        return thumbsUpCount;
     }
 
-    public void setLikeCount(long likeCount) {
-        this.likeCount = likeCount;
+    public void setThumbsUpCount(long thumbsUpCount) {
+        this.thumbsUpCount = thumbsUpCount;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
+    public boolean isActive() {
+        return isActive;
     }
 
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }
