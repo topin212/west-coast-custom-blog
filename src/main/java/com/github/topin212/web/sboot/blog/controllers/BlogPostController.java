@@ -37,21 +37,11 @@ public class BlogPostController {
     }
 
     @RequestMapping(method = RequestMethod.GET, params = {"page", "limit"}, produces = "application/json")
-    public Page<BlogPost> getPostById(
+    public Page<BlogPost> getPostsInPageable(
             @RequestParam int page,
             @RequestParam int limit
     ) throws JsonProcessingException {
         return postService.getAllPostsInPageable(PageRequest.of(page, limit));
-    }
-
-    @RequestMapping(method = RequestMethod.GET, params = {"page", "limit", "publisher_id"}, produces = "application/json")
-    public Page<BlogPost> getPostById(
-            @RequestParam int page,
-            @RequestParam int limit,
-            @RequestParam("publisher_id") Publisher publisher
-    ) throws JsonProcessingException {
-        return postService.
-                getPostsByPublisherWithPageable(publisher, PageRequest.of(page, limit));
     }
 
     @RequestMapping(value = "/own", method = RequestMethod.GET, produces = "application/json")
@@ -75,14 +65,6 @@ public class BlogPostController {
         return new ResponseEntity<>(mapper.writeValueAsString(all), HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/publisher", method = RequestMethod.GET)
-    public ResponseEntity<String> getPostsByCurrentPublisher() throws JsonProcessingException {
-        List<BlogPost> all = postService.getPostsByPublisher(publisherService.getCurrentPublisher());
-
-        return new ResponseEntity<>(mapper.writeValueAsString(all), HttpStatus.OK);
-    }
-
-    //Todo write a private method to
     @ResponseBody
     @RequestMapping(method = RequestMethod.PUT, produces = "application/json")
     public BlogPost createAPost(@RequestBody BlogPost newPost) {
@@ -117,7 +99,7 @@ public class BlogPostController {
         }
 
         postService.deactivatePost(blogPost);
-        return new ResponseEntity<>("", HttpStatus.OK);
+        return new ResponseEntity<>("{\"status\":\"success\"}", HttpStatus.OK);
     }
 
     @RequestMapping(value = "/thumbsup/{postid}", produces = "application/json")

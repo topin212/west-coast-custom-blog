@@ -1,6 +1,5 @@
 package com.github.topin212.web.sboot.blog.entities;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -22,7 +21,6 @@ public class Publisher {
     private String passwordHash;
 
     @Column(name = "reg_date")
-    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private LocalDateTime registrationDate;
 
     @Column(name = "roleId")

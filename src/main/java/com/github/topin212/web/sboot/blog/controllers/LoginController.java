@@ -2,6 +2,7 @@ package com.github.topin212.web.sboot.blog.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.topin212.web.sboot.blog.entities.Publisher;
 import com.github.topin212.web.sboot.blog.entities.responseobjects.TokenResponse;
 import com.github.topin212.web.sboot.blog.exceptions.ApplicationException;

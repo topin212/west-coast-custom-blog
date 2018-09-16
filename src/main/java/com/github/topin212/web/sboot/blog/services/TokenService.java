@@ -38,6 +38,9 @@ public class TokenService {
     }
 
     public boolean containsToken(String token){
-        return publisherRepository.findAll().stream().anyMatch(p -> p.getToken().equals(token));
+        return publisherRepository.findAll()
+                .stream()
+                .anyMatch(p ->
+                        p.getToken() != null && p.getToken().equals(token));
     }
 }

@@ -2,6 +2,7 @@ package com.github.topin212.web.sboot.blog.services;
 
 import com.github.topin212.web.sboot.blog.config.auth.JwtLikeToken;
 import com.github.topin212.web.sboot.blog.entities.Publisher;
+import com.github.topin212.web.sboot.blog.exceptions.ApplicationException;
 import com.github.topin212.web.sboot.blog.repositories.PublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +31,11 @@ public class PublisherService {
         return publisherRepository.findByName(name);
     }
 
-    public Publisher registerPublisher(String name, String password){
+    public Publisher registerPublisher(String name, String password) throws ApplicationException {
+        if(loginAvailable(name)){
+            throw new ApplicationException("Login already taken.");
+        }
+
         String encodedPassword = passwordEncoder.encode(password);
         Publisher publisher = new Publisher(name, encodedPassword);
 
@@ -41,7 +46,14 @@ public class PublisherService {
     }
 
     public Publisher getCurrentPublisher() {
-        return getPublisherByName(
-                SecurityContextHolder.getContext().getAuthentication().getName());
+        String token = (String) SecurityContextHolder.getContext().getAuthentication().getDetails();
+
+        String username = token.split("#")[0];
+
+        return publisherRepository.findByName(username);
+    }
+
+    public boolean loginAvailable(String login){
+        return publisherRepository.findAll().stream().anyMatch(publisher -> publisher.getName().equals(login));
     }
 }
