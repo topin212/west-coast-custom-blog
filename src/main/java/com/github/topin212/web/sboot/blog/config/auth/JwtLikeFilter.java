@@ -16,7 +16,7 @@ import java.io.IOException;
 
 public class JwtLikeFilter extends GenericFilterBean {
 
-    AuthenticationManager authManager;
+    private final AuthenticationManager authManager;
 
     public JwtLikeFilter(AuthenticationManager authManager) {
         this.authManager = authManager;
@@ -41,7 +41,7 @@ public class JwtLikeFilter extends GenericFilterBean {
 
         Authentication responseAuthentication = authManager.authenticate(requestAuthentication);
         if (responseAuthentication == null || !responseAuthentication.isAuthenticated()) {
-            throw new InternalAuthenticationServiceException("Unable to authenticate Domain User for provided credentials");
+            throw new InternalAuthenticationServiceException("User authentication failed");
         }
 
         SecurityContextHolder.getContext().setAuthentication(responseAuthentication);

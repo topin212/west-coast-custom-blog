@@ -30,6 +30,17 @@ public class BlogPost {
     @Column(name = "is_Deleted")
     private boolean isActive;
 
+    public BlogPost() {}
+
+    public BlogPost(Publisher publisher, String postTitle, String postText) {
+        this.publisher = publisher;
+        this.postTitle = postTitle;
+        this.postText = postText;
+        this.postDate = LocalDateTime.now();
+        this.isActive = true;
+        this.thumbsUpCount = 0;
+    }
+
     public void giveALike(){
         this.thumbsUpCount++;
     }

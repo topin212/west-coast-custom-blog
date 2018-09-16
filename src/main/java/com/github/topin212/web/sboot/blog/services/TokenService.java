@@ -1,12 +1,13 @@
 package com.github.topin212.web.sboot.blog.services;
 
 import com.github.topin212.web.sboot.blog.entities.Publisher;
+import com.github.topin212.web.sboot.blog.exceptions.ApplicationException;
 import com.github.topin212.web.sboot.blog.repositories.PublisherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.UUID;
 
 @Service
 public class TokenService {
@@ -17,17 +18,17 @@ public class TokenService {
     public String generateToken(String username, String password, Authentication auth){
         String token = username + "#" + UUID.randomUUID().toString();
 
-        System.out.println("added token " + token + " to storage");
-
         Publisher publisher = publisherRepository.findByName(username);
         publisher.setToken(token);
 
         publisherRepository.save(publisher);
-
         return token;
     }
 
-    public void revokeToken(String token){
+    public void revokeToken(String token) throws ApplicationException {
+        if(token == null || token.isEmpty()){
+            throw new ApplicationException("Attempt to revoke an empty token.", new NullPointerException());
+        }
         String username = token.split("#")[0];
 
         Publisher publisher = publisherRepository.findByName(username);

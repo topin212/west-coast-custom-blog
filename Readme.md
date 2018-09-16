@@ -65,7 +65,7 @@ cd west-coast-custom-blog
 
 7. Assemble the project:
 ```
-mvn package spring-boot:repackage
+mvn package
 ```
 
 8. Run the project:
@@ -78,7 +78,14 @@ For example:
 
 1. Create a new user:
 ```
-curl http://localhost:8080/register -d "login=Olya&password=test2"
+curl http://localhost:8080/register -d "login=Senya&password=test1"
+```
+
+This will register a new Publisher and auto-generate a token for him.
+
+Response example:
+```json
+{"id":5,"name":"Sema","registrationDate":{"year":2018,"monthValue":9,"dayOfMonth":16,"hour":18,"minute":3,"second":2,"nano":592779000,"month":"SEPTEMBER","dayOfYear":259,"dayOfWeek":"SUNDAY","chronology":{"calendarType":"iso8601","id":"ISO"}},"roleId":1,"token":"Sema#ddb72edf-221d-4c7b-93b3-d547a95987fe"}
 ```
 
 2. Write a post as that user:

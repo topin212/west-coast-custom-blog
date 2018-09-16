@@ -1,5 +1,7 @@
 package com.github.topin212.web.sboot.blog.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -15,14 +17,16 @@ public class Publisher {
 
     private String name;
 
+    @JsonIgnore
     @Column(name = "pass_hash")
     private String passwordHash;
 
     @Column(name = "reg_date")
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private LocalDateTime registrationDate;
 
-    @Column(name = "role_id")
-    private Long role_id;
+    @Column(name = "roleId")
+    private Long roleId;
 
     @Column
     private String token;
@@ -33,7 +37,7 @@ public class Publisher {
         this.name = name;
         this.passwordHash = password;
         this.setRegistrationDate(LocalDateTime.now());
-        this.role_id = 1L;
+        this.roleId = 1L;
     }
 
     public Long getId() {
@@ -68,12 +72,12 @@ public class Publisher {
         this.registrationDate = registrationDate;
     }
 
-    public Long getRole_id() {
-        return role_id;
+    public Long getRoleId() {
+        return roleId;
     }
 
-    public void setRole_id(Long role_id) {
-        this.role_id = role_id;
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     public String getToken() {

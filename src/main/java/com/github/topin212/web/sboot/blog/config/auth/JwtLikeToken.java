@@ -10,17 +10,11 @@ import java.util.Set;
 
 public class JwtLikeToken extends PreAuthenticatedAuthenticationToken {
 
-    private static JwtLikeToken instance;
-
-    public JwtLikeToken(Object aPrincipal, Object aCredentials) {
-        super(aPrincipal, aCredentials);
+    private JwtLikeToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+        super(principal, credentials, authorities);
     }
 
-    public JwtLikeToken(Object aPrincipal, Object aCredentials, Collection<? extends GrantedAuthority> anAuthorities) {
-        super(aPrincipal, aCredentials, anAuthorities);
-    }
-
-    public JwtLikeToken setToken(String token){
+    JwtLikeToken setToken(String token){
         setDetails(token);
         return this;
     }
@@ -29,19 +23,11 @@ public class JwtLikeToken extends PreAuthenticatedAuthenticationToken {
         return (String) getDetails();
     }
 
-    public static JwtLikeToken getDefaultValue(){
-
-        if(instance != null){
-            return instance;
-        }
+    public static JwtLikeToken getDefault(){
 
         Set<GrantedAuthority> roleSet = new HashSet<>();
         roleSet.add(new SimpleGrantedAuthority("ROLE_PUBLISHER"));
 
-        instance = new JwtLikeToken("",
-                null,
-                roleSet);
-
-        return instance;
+        return new JwtLikeToken("",null,roleSet);
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -20,16 +21,16 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public BlogPost getPostById(Long postId){
-        if(!postRepository.existsById(postId)){
-            throw new IllegalArgumentException("Results for post id: " + postId + " not found");
-        }
-
-        return postRepository.findById(postId).get();
+    public BlogPost addOrUpdate(BlogPost blogPost){
+        return postRepository.save(blogPost);
     }
 
-    public void addOrUpdate(BlogPost blogPost){
-        postRepository.save(blogPost);
+    public BlogPost editPost(BlogPost original, String newPostTitle, String newPostText){
+        original.setPostTitle(newPostTitle);
+        original.setPostText(newPostText);
+        original.setPostDate(LocalDateTime.now());
+
+        return addOrUpdate(original);
     }
 
     public List<BlogPost> getAllPosts(){
