@@ -25,7 +25,7 @@ public class PostService {
 
     public BlogPost addOrUpdate(BlogPost blogPost) throws ApplicationException {
 
-        if(blogPost.isValid()) {
+        if (blogPost.isValid()) {
             return postRepository.save(blogPost);
         }
         throw new ApplicationException("Blog post was invalid", "blogPostValidation");
@@ -39,24 +39,24 @@ public class PostService {
         return addOrUpdate(original);
     }
 
-    public List<BlogPost> getAllPosts(){
+    public List<BlogPost> getAllPosts() {
         return postRepository.findAll();
     }
 
-    public Page<BlogPost> getAllPostsInPageable(Pageable pageable){
+    public Page<BlogPost> getAllPostsInPageable(Pageable pageable) {
         return postRepository.findAll(pageable);
     }
 
-    public List<BlogPost> getPostsByPublisher(Publisher publisher){
+    public List<BlogPost> getPostsByPublisher(Publisher publisher) {
         return postRepository.findByPublisher(publisher);
     }
 
-    public Page<BlogPost> getPostsByPublisherWithPageable(Publisher publisher, Pageable pageable){
+    public Page<BlogPost> getPostsByPublisherWithPageable(Publisher publisher, Pageable pageable) {
         return postRepository.findByPublisher(publisher, pageable);
     }
 
-    public boolean giveALike(Long postId){
-        if(!postRepository.existsById(postId)){
+    public boolean giveALike(Long postId) {
+        if (!postRepository.existsById(postId)) {
             throw new IllegalArgumentException("Results for blogPost id: " + postId + " not found");
         }
 
@@ -67,7 +67,7 @@ public class PostService {
         return true;
     }
 
-    public void deactivatePost(BlogPost blogPost){
+    public void deactivatePost(BlogPost blogPost) {
         blogPost.setActive(false);
         postRepository.save(blogPost);
     }

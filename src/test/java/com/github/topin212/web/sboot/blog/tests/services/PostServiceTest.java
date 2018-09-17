@@ -4,7 +4,6 @@ import com.github.topin212.web.sboot.blog.entities.BlogPost;
 import com.github.topin212.web.sboot.blog.exceptions.ApplicationException;
 import com.github.topin212.web.sboot.blog.services.PostService;
 import com.github.topin212.web.sboot.blog.tests.stubs.BlogPostRepositoryStub;
-import com.github.topin212.web.sboot.blog.tests.stubs.PublisherRepositoryStub;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

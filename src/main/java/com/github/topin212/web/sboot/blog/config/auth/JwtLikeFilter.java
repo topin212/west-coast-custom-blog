@@ -28,11 +28,11 @@ public class JwtLikeFilter extends GenericFilterBean {
 
         String token = request.getHeader("Token");
 
-        if(token != null && !token.equals("")){
+        if (token != null && !token.equals("")) {
             authForToken(token);
         }
 
-        filterChain.doFilter(servletRequest,servletResponse);
+        filterChain.doFilter(servletRequest, servletResponse);
     }
 
 

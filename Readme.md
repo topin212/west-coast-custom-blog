@@ -11,7 +11,9 @@ git clone https://github.com/topin212/west-coast-custom-blog.git
 
 cd west-coast-custom-blog
 
-mvn clean package spring-boot:repackage
+mysql -u {username} -p < schema.sql
+
+mvn clean package
 
 java -jar target/web-sboot-blog-1.4.jar
 ```
@@ -63,12 +65,17 @@ git clone https://github.com/topin212/west-coast-custom-blog.git
 cd west-coast-custom-blog
 ```
 
-5. Assemble the project:
+5. Set database structure:
+```
+mysql -u {username} -p < schema.sql
+```
+
+6. Assemble the project:
 ```
 mvn package
 ```
 
-6. Run the project:
+7. Run the project:
 ```
 java -jar target/web-sboot-blog-1.3.jar
 ```

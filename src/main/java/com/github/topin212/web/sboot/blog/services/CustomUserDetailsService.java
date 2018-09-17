@@ -25,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
         Publisher publisher = publisherService.getPublisherByName(login);
 
-        if(publisher == null) {
+        if (publisher == null) {
             throw new UsernameNotFoundException("User " + login + " is not known.");
         }
 

@@ -58,7 +58,7 @@ public class BlogPostController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = "application/json")
     public ProcedureStatusResponse getPostById(@PathVariable("id") BlogPost blogPost) throws ApplicationException {
-        if(blogPost != null && blogPost.isValid()){
+        if (blogPost != null && blogPost.isValid()) {
             return new ProcedureStatusResponse("postFetching", blogPost);
         }
         throw new ApplicationException("Invalid id.", "postFetching");
@@ -89,13 +89,13 @@ public class BlogPostController {
         Publisher currentUser = publisherService.getCurrentPublisher();
 
         if (!currentUser.equals(blogPost.getPublisher())) {
-            throw new ApplicationException("You are not authorized to edit this blogPost","postUpdating");
+            throw new ApplicationException("You are not authorized to edit this blogPost", "postUpdating");
         }
 
-        if(blogPost.isValid()){
+        if (blogPost.isValid()) {
             return new ProcedureStatusResponse(
-                "postUpdating",
-                postService.editPost(blogPost, newBlogPost.getPostTitle(), newBlogPost.getPostText())
+                    "postUpdating",
+                    postService.editPost(blogPost, newBlogPost.getPostTitle(), newBlogPost.getPostText())
             );
         }
 

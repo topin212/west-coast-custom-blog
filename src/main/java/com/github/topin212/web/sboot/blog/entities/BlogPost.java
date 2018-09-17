@@ -45,7 +45,7 @@ public class BlogPost {
         this.thumbsUpCount = 0;
     }
 
-    public boolean isValid(){
+    public boolean isValid() {
         return publisher != null && postTitle != null && postText != null;
     }
 

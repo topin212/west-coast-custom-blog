@@ -27,12 +27,12 @@ public class PublisherService {
         this.tokenService = tokenService;
     }
 
-    public Publisher getPublisherByName(String name){
+    public Publisher getPublisherByName(String name) {
         return publisherRepository.findByName(name);
     }
 
     public Publisher registerPublisher(String name, String password) throws ApplicationException {
-        if(loginAvailable(name)){
+        if (loginAvailable(name)) {
             throw new ApplicationException("Login already taken.", "login");
         }
 
@@ -53,7 +53,7 @@ public class PublisherService {
         return publisherRepository.findByName(username);
     }
 
-    public boolean loginAvailable(String login){
+    public boolean loginAvailable(String login) {
         return publisherRepository.findAll().stream().anyMatch(publisher -> publisher.getName().equals(login));
     }
 }

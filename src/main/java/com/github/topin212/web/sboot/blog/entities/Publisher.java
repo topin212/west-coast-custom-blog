@@ -2,10 +2,12 @@ package com.github.topin212.web.sboot.blog.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
-import java.time.*;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 @Entity(name = "publisher")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -30,7 +32,8 @@ public class Publisher {
     @Column
     private String token;
 
-    public Publisher() {}
+    public Publisher() {
+    }
 
     public Publisher(String name, String password) {
         this.name = name;

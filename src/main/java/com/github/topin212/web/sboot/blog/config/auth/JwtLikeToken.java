@@ -14,20 +14,20 @@ public class JwtLikeToken extends PreAuthenticatedAuthenticationToken {
         super(principal, credentials, authorities);
     }
 
-    JwtLikeToken setToken(String token){
+    JwtLikeToken setToken(String token) {
         setDetails(token);
         return this;
     }
 
-    public String getToken(){
+    public String getToken() {
         return (String) getDetails();
     }
 
-    public static JwtLikeToken getDefault(){
+    public static JwtLikeToken getDefault() {
 
         Set<GrantedAuthority> roleSet = new HashSet<>();
         roleSet.add(new SimpleGrantedAuthority("ROLE_PUBLISHER"));
 
-        return new JwtLikeToken("",null,roleSet);
+        return new JwtLikeToken("", null, roleSet);
     }
 }

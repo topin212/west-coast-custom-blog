@@ -15,13 +15,14 @@ public class TokenService {
     @Autowired
     PublisherRepository publisherRepository;
 
-    public TokenService() {}
+    public TokenService() {
+    }
 
     public TokenService(PublisherRepository publisherRepository) {
         this.publisherRepository = publisherRepository;
     }
 
-    public String generateToken(String username, String password, Authentication auth){
+    public String generateToken(String username, String password, Authentication auth) {
         String token = username + "#" + UUID.randomUUID().toString();
 
         Publisher publisher = publisherRepository.findByName(username);
@@ -32,7 +33,7 @@ public class TokenService {
     }
 
     public void revokeToken(String token) throws ApplicationException {
-        if(token == null || token.isEmpty()){
+        if (token == null || token.isEmpty()) {
             throw new ApplicationException("Attempt to revoke an empty token.", "tokenGeneration");
         }
         String username = token.split("#")[0];
@@ -43,7 +44,7 @@ public class TokenService {
         publisherRepository.save(publisher);
     }
 
-    public boolean containsToken(String token){
+    public boolean containsToken(String token) {
         return publisherRepository.findAll()
                 .stream()
                 .anyMatch(p ->

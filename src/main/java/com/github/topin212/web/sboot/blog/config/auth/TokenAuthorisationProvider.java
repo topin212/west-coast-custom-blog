@@ -21,11 +21,11 @@ public class TokenAuthorisationProvider implements AuthenticationProvider {
 
         String token = (String) authentication.getPrincipal();
 
-        if(token == null && token.isEmpty()){
+        if (token == null && token.isEmpty()) {
             throw new BadCredentialsException("Token is empty or null.");
         }
 
-        if(!tokenService.containsToken(token)){
+        if (!tokenService.containsToken(token)) {
             throw new BadCredentialsException("The token was invalid: " + token);
         }
 
