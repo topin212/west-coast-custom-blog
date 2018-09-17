@@ -2,7 +2,7 @@
 
 This project is a blog api made as a task for a company, which I will not name for ethical reasons.
 
-## TL DR;
+# TL DR;
 
 ```bash
 service start mariadb
@@ -13,10 +13,10 @@ cd west-coast-custom-blog
 
 mvn clean package spring-boot:repackage
 
-java -jar target/web-sboot-blog-1.3.jar
+java -jar target/web-sboot-blog-1.4.jar
 ```
 
-## In for the long part
+# In for the long part
 
 ### Prerequisites
 
@@ -73,463 +73,519 @@ mvn package
 java -jar target/web-sboot-blog-1.3.jar
 ```
 
-## Playing around with API
+# Playing around with API
 
 Now you are free to use the api.
 For example:
 
 1. Create a new user:
-```
-curl http://localhost:8080/register -d "login=testUserP&password=testPass"
+
+```bash
+curl http://localhost:8080/register -d "login=newUser&password=pass"
 ```
 
 This will register a new Publisher and auto-generate a token for him.
 
-Response example:
+<details><summary>Response example:</summary>
+<p>
+
 ```json
 {
-   "id":25,
-   "name":"testUserP",
-   "registrationDate":{
-      "timestamp":1537123518711,
-      "iso":"2018-09-16T21:45:18.711647"
-   },
-   "roleId":1,
-   {
-      "token":"testUserP#1vcb9506-5q83-4891-8a99-6a04086a4e90"
+   "procedure":"login",
+   "status":"success",
+   "result":{
+      "id":35,
+      "name":"newUser",
+      "registrationDate":{
+         "timestamp":1537146724,
+         "iso":"2018-09-17T01:12:04.672531Z"
+      },
+      "roleId":1,
+      "token":"newUser#cedbc64f-4e2e-4e00-8db2-e4ec03e80c5a"
    }
 }
 ```
 
-Role id of one represents the Publisher role.
-
+</p>
+</details>
+<hr/>
 
 2. Write a post as that user:
-```
-curl -X PUT http://localhost:8080/post -H token:{your token} -H Content-Type:application/json -d '{"postTitle":"My new Post", "postText" : "Hello World!"}'
+
+```bash
+curl -X PUT http://localhost:8080/post -H "token:{token}" -H Content-Type:application/json -d '{"postTitle":"My new Post", "postText" : "Hello World!"}'
 ```
 
-This will return an object, representing a post you have just created:
+This will return an object, representing a post you have just created.
+<details><summary>Response example:</summary>
+<p>
 
 ```json
 {
-   "id":8,
-   "publisher":{
-      "id":27,
-      "name":"testUser",
-      "registrationDate":{
-         "timestamp":1537124018000,
-         "iso":"2018-09-16T21:53:38"
+   "procedure":"postCreation",
+   "status":"success",
+   "result":{
+      "id":10,
+      "publisher":{
+         "id":35,
+         "name":"newUser",
+         "registrationDate":{
+            "timestamp":1537146724,
+            "iso":"2018-09-17T04:12:04+03:00"
+         },
+         "roleId":1,
+         "token":"newUser#cedbc64f-4e2e-4e00-8db2-e4ec03e80c5a"
       },
-      "roleId":1,
-      "token":"testUser#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
-   },
-   "postTitle":"My new Post",
-   "postText":"Hello World!!",
-   "postDate":{
-      "timestamp":1537128314302,
-      "iso":"2018-09-16T23:05:14.302377"
-   },
-   "thumbsUpCount":0,
-   "active":true
+      "postTitle":"My new Post",
+      "postText":"Hello World!",
+      "postDate":{
+         "timestamp":1537147028,
+         "iso":"2018-09-17T01:17:08.290416Z"
+      },
+      "thumbsUpCount":0,
+      "valid":true,
+      "active":true
+   }
 }
-
 ```
+</p>
+</details>
 
+<hr/>
 3. View your posts:
-```
-curl "http://localhost:8080/post/own?page=0&limit=10" -H {token}
+
+```bash
+curl "http://localhost:8080/post/own?page=0&amp;limit=10" -H "token:{token}"
 ```
 
-Response example:
+<details><summary>Response example:</summary>
+<p>
+
 ```json
 {
-   "content":[
-      {
-         "id":5,
-         "publisher":{
-            "id":27,
-            "name":"SeregaQ",
-            "registrationDate":{
-               "timestamp":1537124018000,
-               "iso":"2018-09-16T21:53:38"
+   "procedure":"postFetching",
+   "status":"success",
+   "result":{
+      "content":[
+         {
+            "id":10,
+            "publisher":{
+               "id":35,
+               "name":"newUser",
+               "registrationDate":{
+                  "timestamp":1537146724,
+                  "iso":"2018-09-17T04:12:04+03:00"
+               },
+               "roleId":1,
+               "token":"newUser#cedbc64f-4e2e-4e00-8db2-e4ec03e80c5a"
             },
-            "roleId":1,
-            "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
+            "postTitle":"My new Post",
+            "postText":"Hello World!",
+            "postDate":{
+               "timestamp":1537147028,
+               "iso":"2018-09-17T04:17:08+03:00"
+            },
+            "thumbsUpCount":0,
+            "valid":true,
+            "active":true
+         }
+      ],
+      "pageable":{
+         "sort":{
+            "sorted":false,
+            "unsorted":true
          },
-         "postTitle":"My new Post",
-         "postText":"Hello World!",
-         "postDate":{
-            "timestamp":1537124895000,
-            "iso":"2018-09-16T22:08:15"
-         },
-         "thumbsUpCount":0,
-         "active":true
+         "pageSize":10,
+         "pageNumber":0,
+         "offset":0,
+         "paged":true,
+         "unpaged":false
       },
-      {
-         "id":6,
-         "publisher":{
-            "id":27,
-            "name":"SeregaQ",
-            "registrationDate":{
-               "timestamp":1537124018000,
-               "iso":"2018-09-16T21:53:38"
-            },
-            "roleId":1,
-            "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
-         },
-         "postTitle":"123",
-         "postText":"Hello World312!",
-         "postDate":{
-            "timestamp":1537125604000,
-            "iso":"2018-09-16T22:20:04"
-         },
-         "thumbsUpCount":0,
-         "active":false
-      },
-      {
-         "id":7,
-         "publisher":{
-            "id":27,
-            "name":"SeregaQ",
-            "registrationDate":{
-               "timestamp":1537124018000,
-               "iso":"2018-09-16T21:53:38"
-            },
-            "roleId":1,
-            "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
-         },
-         "postTitle":"123",
-         "postText":"Hello World312!",
-         "postDate":{
-            "timestamp":1537128198000,
-            "iso":"2018-09-16T23:03:18"
-         },
-         "thumbsUpCount":0,
-         "active":true
-      },
-      {
-         "id":8,
-         "publisher":{
-            "id":27,
-            "name":"SeregaQ",
-            "registrationDate":{
-               "timestamp":1537124018000,
-               "iso":"2018-09-16T21:53:38"
-            },
-            "roleId":1,
-            "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
-         },
-         "postTitle":"123",
-         "postText":"Hello World312!",
-         "postDate":{
-            "timestamp":1537128314000,
-            "iso":"2018-09-16T23:05:14"
-         },
-         "thumbsUpCount":0,
-         "active":true
-      }
-   ],
-   "pageable":{
+      "last":true,
+      "totalPages":1,
+      "totalElements":1,
       "sort":{
          "sorted":false,
          "unsorted":true
       },
-      "pageSize":10,
-      "pageNumber":0,
-      "offset":0,
-      "paged":true,
-      "unpaged":false
-   },
-   "totalPages":1,
-   "totalElements":4,
-   "last":true,
-   "sort":{
-      "sorted":false,
-      "unsorted":true
-   },
-   "first":true,
-   "size":10,
-   "number":0,
-   "numberOfElements":4
+      "first":true,
+      "number":0,
+      "numberOfElements":1,
+      "size":10
+   }
 }
 ```
+</p>
+</details>
 
+<hr/>
 4. View all posts:
-```
-curl "http://localhost:8080/post?page=0&limit=10" -H {token}
-```
 
-Response example:
+```bash
+curl "http://localhost:8080/post?page=0&amp;limit=10" -H "token:{token}"
+```
+> Output will be exactly the same if we assume a fresh installation with no database.
+For this example a populated database was used.
+
+<details><summary>Response example:</summary>
+<p>
+
 ```json
 {
-   "content":[
-      {
-         "id":1,
-         "publisher":{
+   "procedure":"postFetching",
+   "status":"success",
+   "result":{
+      "content":[
+         {
             "id":1,
-            "name":"Petya",
-            "registrationDate":{
-               "timestamp":1536803502000,
-               "iso":"2018-09-13T04:51:42"
+            "publisher":{
+               "id":1,
+               "name":"Petya",
+               "registrationDate":{
+                  "timestamp":1536803502,
+                  "iso":"2018-09-13T04:51:42+03:00"
+               },
+               "roleId":1,
+               "token":"Petya#0cc5ef3a-ed3f-491d-96e2-38521a1b7826"
             },
-            "roleId":1,
-            "token":"Petya#0cc5ef3a-ed3f-491d-96e2-38521a1b7826"
-         },
-         "postTitle":"456",
-         "postText":"765",
-         "postDate":{
-            "timestamp":1536956083000,
-            "iso":"2018-09-14T23:14:43"
-         },
-         "thumbsUpCount":1,
-         "active":true
-      },
-      {
-         "id":2,
-         "publisher":{
-            "id":1,
-            "name":"Petya",
-            "registrationDate":{
-               "timestamp":1536803502000,
-               "iso":"2018-09-13T04:51:42"
+            "postTitle":"456",
+            "postText":"765",
+            "postDate":{
+               "timestamp":1536956083,
+               "iso":"2018-09-14T23:14:43+03:00"
             },
-            "roleId":1,
-            "token":"Petya#0cc5ef3a-ed3f-491d-96e2-38521a1b7826"
+            "thumbsUpCount":1,
+            "valid":true,
+            "active":true
          },
-         "postTitle":"testTitle1",
-         "postText":"testPost1",
-         "postDate":{
-            "timestamp":1536803523000,
-            "iso":"2018-09-13T04:52:03"
-         },
-         "thumbsUpCount":0,
-         "active":true
-      },
-      {
-         "id":3,
-         "publisher":{
+         {
             "id":2,
-            "name":"Vasya",
-            "registrationDate":{
-               "timestamp":1536803502000,
-               "iso":"2018-09-13T04:51:42"
+            "publisher":{
+               "id":1,
+               "name":"Petya",
+               "registrationDate":{
+                  "timestamp":1536803502,
+                  "iso":"2018-09-13T04:51:42+03:00"
+               },
+               "roleId":1,
+               "token":"Petya#0cc5ef3a-ed3f-491d-96e2-38521a1b7826"
             },
-            "roleId":1,
-            "token":"\"\""
+            "postTitle":"testTitle1",
+            "postText":"testPost1",
+            "postDate":{
+               "timestamp":1536803523,
+               "iso":"2018-09-13T04:52:03+03:00"
+            },
+            "thumbsUpCount":0,
+            "valid":true,
+            "active":true
          },
-         "postTitle":"user2TestTitle",
-         "postText":"user2TestPost",
-         "postDate":{
-            "timestamp":1536803523000,
-            "iso":"2018-09-13T04:52:03"
+         {
+            "id":3,
+            "publisher":{
+               "id":2,
+               "name":"Vasya",
+               "registrationDate":{
+                  "timestamp":1536803502,
+                  "iso":"2018-09-13T04:51:42+03:00"
+               },
+               "roleId":1,
+               "token":"\"\""
+            },
+            "postTitle":"user2TestTitle",
+            "postText":"user2TestPost",
+            "postDate":{
+               "timestamp":1536803523,
+               "iso":"2018-09-13T04:52:03+03:00"
+            },
+            "thumbsUpCount":0,
+            "valid":true,
+            "active":true
          },
-         "thumbsUpCount":0,
-         "active":true
+         {
+            "id":4,
+            "publisher":{
+               "id":2,
+               "name":"Vasya",
+               "registrationDate":{
+                  "timestamp":1536803502,
+                  "iso":"2018-09-13T04:51:42+03:00"
+               },
+               "roleId":1,
+               "token":"\"\""
+            },
+            "postTitle":"321",
+            "postText":"123",
+            "postDate":{
+               "timestamp":1536841167,
+               "iso":"2018-09-13T15:19:27+03:00"
+            },
+            "thumbsUpCount":0,
+            "valid":true,
+            "active":true
+         },
+         {
+            "id":5,
+            "publisher":{
+               "id":27,
+               "name":"SeregaQ",
+               "registrationDate":{
+                  "timestamp":1537124018,
+                  "iso":"2018-09-16T21:53:38+03:00"
+               },
+               "roleId":1,
+               "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
+            },
+            "postTitle":"My new Post",
+            "postText":"Hello World!",
+            "postDate":{
+               "timestamp":1537124895,
+               "iso":"2018-09-16T22:08:15+03:00"
+            },
+            "thumbsUpCount":0,
+            "valid":true,
+            "active":true
+         },
+         {
+            "id":6,
+            "publisher":{
+               "id":27,
+               "name":"SeregaQ",
+               "registrationDate":{
+                  "timestamp":1537124018,
+                  "iso":"2018-09-16T21:53:38+03:00"
+               },
+               "roleId":1,
+               "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
+            },
+            "postTitle":"123",
+            "postText":"Hello World312!",
+            "postDate":{
+               "timestamp":1537125604,
+               "iso":"2018-09-16T22:20:04+03:00"
+            },
+            "thumbsUpCount":0,
+            "valid":true,
+            "active":false
+         },
+         {
+            "id":7,
+            "publisher":{
+               "id":27,
+               "name":"SeregaQ",
+               "registrationDate":{
+                  "timestamp":1537124018,
+                  "iso":"2018-09-16T21:53:38+03:00"
+               },
+               "roleId":1,
+               "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
+            },
+            "postTitle":"123",
+            "postText":"Hello World312!",
+            "postDate":{
+               "timestamp":1537128198,
+               "iso":"2018-09-16T23:03:18+03:00"
+            },
+            "thumbsUpCount":0,
+            "valid":true,
+            "active":true
+         },
+         {
+            "id":8,
+            "publisher":{
+               "id":27,
+               "name":"SeregaQ",
+               "registrationDate":{
+                  "timestamp":1537124018,
+                  "iso":"2018-09-16T21:53:38+03:00"
+               },
+               "roleId":1,
+               "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
+            },
+            "postTitle":"123",
+            "postText":"Hello World312!",
+            "postDate":{
+               "timestamp":1537129178,
+               "iso":"2018-09-16T23:19:38+03:00"
+            },
+            "thumbsUpCount":0,
+            "valid":true,
+            "active":false
+         },
+         {
+            "id":9,
+            "publisher":{
+               "id":29,
+               "name":"testUser",
+               "registrationDate":{
+                  "timestamp":1537132020,
+                  "iso":"2018-09-17T00:07:00+03:00"
+               },
+               "roleId":1,
+               "token":"testUser#98b76b67-bc6b-412a-902a-4e368d129b99"
+            },
+            "postTitle":"My new Post",
+            "postText":"Hello World!",
+            "postDate":{
+               "timestamp":1537132131,
+               "iso":"2018-09-17T00:08:51+03:00"
+            },
+            "thumbsUpCount":0,
+            "valid":true,
+            "active":true
+         },
+         {
+            "id":10,
+            "publisher":{
+               "id":35,
+               "name":"newUser",
+               "registrationDate":{
+                  "timestamp":1537146724,
+                  "iso":"2018-09-17T04:12:04+03:00"
+               },
+               "roleId":1,
+               "token":"newUser#cedbc64f-4e2e-4e00-8db2-e4ec03e80c5a"
+            },
+            "postTitle":"My new Post",
+            "postText":"Hello World!",
+            "postDate":{
+               "timestamp":1537147028,
+               "iso":"2018-09-17T04:17:08+03:00"
+            },
+            "thumbsUpCount":0,
+            "valid":true,
+            "active":true
+         }
+      ],
+      "pageable":{
+         "sort":{
+            "sorted":false,
+            "unsorted":true
+         },
+         "pageSize":10,
+         "pageNumber":0,
+         "offset":0,
+         "paged":true,
+         "unpaged":false
       },
-      {
-         "id":4,
-         "publisher":{
-            "id":2,
-            "name":"Vasya",
-            "registrationDate":{
-               "timestamp":1536803502000,
-               "iso":"2018-09-13T04:51:42"
-            },
-            "roleId":1,
-            "token":"\"\""
-         },
-         "postTitle":"321",
-         "postText":"123",
-         "postDate":{
-            "timestamp":1536841167000,
-            "iso":"2018-09-13T15:19:27"
-         },
-         "thumbsUpCount":0,
-         "active":true
-      },
-      {
-         "id":5,
-         "publisher":{
-            "id":27,
-            "name":"SeregaQ",
-            "registrationDate":{
-               "timestamp":1537124018000,
-               "iso":"2018-09-16T21:53:38"
-            },
-            "roleId":1,
-            "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
-         },
-         "postTitle":"My new Post",
-         "postText":"Hello World!",
-         "postDate":{
-            "timestamp":1537124895000,
-            "iso":"2018-09-16T22:08:15"
-         },
-         "thumbsUpCount":0,
-         "active":true
-      },
-      {
-         "id":6,
-         "publisher":{
-            "id":27,
-            "name":"SeregaQ",
-            "registrationDate":{
-               "timestamp":1537124018000,
-               "iso":"2018-09-16T21:53:38"
-            },
-            "roleId":1,
-            "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
-         },
-         "postTitle":"123",
-         "postText":"Hello World312!",
-         "postDate":{
-            "timestamp":1537125604000,
-            "iso":"2018-09-16T22:20:04"
-         },
-         "thumbsUpCount":0,
-         "active":false
-      },
-      {
-         "id":7,
-         "publisher":{
-            "id":27,
-            "name":"SeregaQ",
-            "registrationDate":{
-               "timestamp":1537124018000,
-               "iso":"2018-09-16T21:53:38"
-            },
-            "roleId":1,
-            "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
-         },
-         "postTitle":"123",
-         "postText":"Hello World312!",
-         "postDate":{
-            "timestamp":1537128198000,
-            "iso":"2018-09-16T23:03:18"
-         },
-         "thumbsUpCount":0,
-         "active":true
-      },
-      {
-         "id":8,
-         "publisher":{
-            "id":27,
-            "name":"SeregaQ",
-            "registrationDate":{
-               "timestamp":1537124018000,
-               "iso":"2018-09-16T21:53:38"
-            },
-            "roleId":1,
-            "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
-         },
-         "postTitle":"123",
-         "postText":"Hello World312!",
-         "postDate":{
-            "timestamp":1537128314000,
-            "iso":"2018-09-16T23:05:14"
-         },
-         "thumbsUpCount":0,
-         "active":true
-      }
-   ],
-   "pageable":{
+      "last":true,
+      "totalPages":1,
+      "totalElements":10,
       "sort":{
          "sorted":false,
          "unsorted":true
       },
-      "pageSize":10,
-      "pageNumber":0,
-      "offset":0,
-      "paged":true,
-      "unpaged":false
-   },
-   "totalPages":1,
-   "totalElements":8,
-   "last":true,
-   "sort":{
-      "sorted":false,
-      "unsorted":true
-   },
-   "first":true,
-   "size":10,
-   "number":0,
-   "numberOfElements":8
+      "first":true,
+      "number":0,
+      "numberOfElements":10,
+      "size":10
+   }
 }
-
 ```
-
+</p>
+</details>
+<hr/>
 5. View a post by id:
-```
-curl -X DELETE http://localhost:8080/post/6 -H {token}
+
+```bash
+curl http://localhost:8080/post/10 -H {token}
 ```
 
-Response example:
+<details><summary>Response example:</summary>
+<p>
+
 ```json
 {
-   "id":5,
-   "publisher":{
-      "id":27,
-      "name":"SeregaQ",
-      "registrationDate":{
-         "timestamp":1537124018000,
-         "iso":"2018-09-16T21:53:38"
+   "procedure":"postFetching",
+   "status":"success",
+   "result":{
+      "id":10,
+      "publisher":{
+         "id":35,
+         "name":"newUser",
+         "registrationDate":{
+            "timestamp":1537146724,
+            "iso":"2018-09-17T04:12:04+03:00"
+         },
+         "roleId":1,
+         "token":"newUser#cedbc64f-4e2e-4e00-8db2-e4ec03e80c5a"
       },
-      "roleId":1,
-      "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
-   },
-   "postTitle":"My new Post",
-   "postText":"Hello World!",
-   "postDate":{
-      "timestamp":1537124895000,
-      "iso":"2018-09-16T22:08:15"
-   },
-   "thumbsUpCount":0,
-   "active":true
+      "postTitle":"My new Post",
+      "postText":"Hello World!",
+      "postDate":{
+         "timestamp":1537147028,
+         "iso":"2018-09-17T04:17:08+03:00"
+      },
+      "thumbsUpCount":0,
+      "valid":true,
+      "active":true
+   }
 }
 ```
-
+</p>
+</details>
+<hr/>
 6. Update your post:
-```
-curl -X PUT http://localhost:8080/post/6 -H {token} -H Content-Type:application/json -d '{"postTitle":"Updated post title", "postText" : "Updated post Text"}'
+
+
+```bash
+curl -X PUT http://localhost:8080/post/10 -H {token} -H Content-Type:application/json -d '{"postTitle":"Updated post title", "postText" : "Updated post Text"}'
 ```
 
-Response example:
+<details><summary>Response example:</summary>
+<p>
+
 ```json
 {
-   "id":6,
-   "publisher":{
-      "id":27,
-      "name":"SeregaQ",
-      "registrationDate":{
-         "timestamp":1537124018000,
-         "iso":"2018-09-16T21:53:38"
+   "procedure":"postUpdating",
+   "status":"success",
+   "result":{
+      "id":10,
+      "publisher":{
+         "id":35,
+         "name":"newUser",
+         "registrationDate":{
+            "timestamp":1537146724,
+            "iso":"2018-09-17T04:12:04+03:00"
+         },
+         "roleId":1,
+         "token":"newUser#cedbc64f-4e2e-4e00-8db2-e4ec03e80c5a"
       },
-      "roleId":1,
-      "token":"SeregaQ#fa0808ad-e6a1-4e9d-957c-f0c5f6d1c8df"
-   },
-   "postTitle":"123",
-   "postText":"Hello World312!",
-   "postDate":{
-      "timestamp":1537125604000,
-      "iso":"2018-09-16T22:20:04"
-   },
-   "thumbsUpCount":0,
-   "active":true
+      "postTitle":"Updated post title",
+      "postText":"Updated post Text",
+      "postDate":{
+         "timestamp":1537158253,
+         "iso":"2018-09-17T04:24:13.840308Z"
+      },
+      "thumbsUpCount":0,
+      "valid":true,
+      "active":true
+   }
 }
 ```
 
+</p>
+</details>
+<hr/>
 7. Delete your post:
-```
-curl -X DELETE http://localhost:8080/post/6 -H {token}
+
+
+```bash
+curl -X DELETE http://localhost:8080/post/10 -H {token}
 ```
 
-Response example:
+<details><summary>Response example:</summary>
+<p>
+
 ```json
 {
-   "status":"success"
+   "procedure":"orderDeletion",
+   "status":"success",
+   "result":"success"
 }
 ```
+</p>
+</details>
 
 Please, note that this WILL NOT delete your post, it will only mark it as an inactive post.
 

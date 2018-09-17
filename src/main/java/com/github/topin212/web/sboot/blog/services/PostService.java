@@ -2,6 +2,7 @@ package com.github.topin212.web.sboot.blog.services;
 
 import com.github.topin212.web.sboot.blog.entities.BlogPost;
 import com.github.topin212.web.sboot.blog.entities.Publisher;
+import com.github.topin212.web.sboot.blog.exceptions.ApplicationException;
 import com.github.topin212.web.sboot.blog.repositories.PostRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -21,14 +23,18 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    public BlogPost addOrUpdate(BlogPost blogPost){
-        return postRepository.save(blogPost);
+    public BlogPost addOrUpdate(BlogPost blogPost) throws ApplicationException {
+
+        if(blogPost.isValid()) {
+            return postRepository.save(blogPost);
+        }
+        throw new ApplicationException("Blog post was invalid", "blogPostValidation");
     }
 
-    public BlogPost editPost(BlogPost original, String newPostTitle, String newPostText){
+    public BlogPost editPost(BlogPost original, String newPostTitle, String newPostText) throws ApplicationException {
         original.setPostTitle(newPostTitle);
         original.setPostText(newPostText);
-        original.setPostDate(LocalDateTime.now());
+        original.setPostDate(LocalDateTime.now().atOffset(ZoneOffset.UTC));
 
         return addOrUpdate(original);
     }

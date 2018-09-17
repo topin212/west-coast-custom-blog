@@ -1,14 +1,8 @@
 package com.github.topin212.web.sboot.blog.config;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.topin212.web.sboot.blog.config.auth.JwtLikeFilter;
 import com.github.topin212.web.sboot.blog.config.auth.TokenAuthorisationProvider;
 import com.github.topin212.web.sboot.blog.services.TokenService;
-import com.github.topin212.web.sboot.blog.util.localDateTimeSerDes.LocalDateTimeDeserializer;
-import com.github.topin212.web.sboot.blog.util.localDateTimeSerDes.LocalDateTimeSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,8 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-
-import java.time.LocalDateTime;
 
 @Configuration
 @EnableWebSecurity
@@ -84,27 +76,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new TokenAuthorisationProvider(tokenService());
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        mapper.disable(SerializationFeature.WRITE_DATE_TIMESTAMPS_AS_NANOSECONDS);
-
-        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_EMPTY);
-        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
-
-        SimpleModule module = new SimpleModule();
-
-        module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
-        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
-
-        mapper.registerModule(module);
-
-        return mapper;
-    }
-
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers(HttpMethod.OPTIONS, "/**");
     }
 }

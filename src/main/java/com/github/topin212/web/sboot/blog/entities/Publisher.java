@@ -2,9 +2,10 @@ package com.github.topin212.web.sboot.blog.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.tomcat.jni.Local;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.*;
 
 @Entity(name = "publisher")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -21,7 +22,7 @@ public class Publisher {
     private String passwordHash;
 
     @Column(name = "reg_date")
-    private LocalDateTime registrationDate;
+    private OffsetDateTime registrationDate;
 
     @Column(name = "roleId")
     private Long roleId;
@@ -34,7 +35,7 @@ public class Publisher {
     public Publisher(String name, String password) {
         this.name = name;
         this.passwordHash = password;
-        this.setRegistrationDate(LocalDateTime.now());
+        this.setRegistrationDate(LocalDateTime.now(ZoneId.of("UTC")).atOffset(ZoneOffset.UTC));
         this.roleId = 1L;
     }
 
@@ -62,11 +63,11 @@ public class Publisher {
         this.passwordHash = passwordHash;
     }
 
-    public LocalDateTime getRegistrationDate() {
+    public OffsetDateTime getRegistrationDate() {
         return registrationDate;
     }
 
-    public void setRegistrationDate(LocalDateTime registrationDate) {
+    public void setRegistrationDate(OffsetDateTime registrationDate) {
         this.registrationDate = registrationDate;
     }
 

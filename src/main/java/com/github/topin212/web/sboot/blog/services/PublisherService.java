@@ -33,7 +33,7 @@ public class PublisherService {
 
     public Publisher registerPublisher(String name, String password) throws ApplicationException {
         if(loginAvailable(name)){
-            throw new ApplicationException("Login already taken.");
+            throw new ApplicationException("Login already taken.", "login");
         }
 
         String encodedPassword = passwordEncoder.encode(password);

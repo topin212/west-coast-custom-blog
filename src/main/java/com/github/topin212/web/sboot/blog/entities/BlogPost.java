@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 @Entity(name = "post")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -14,7 +17,7 @@ public class BlogPost {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="publisher_id")
+    @JoinColumn(name = "publisher_id")
     private Publisher publisher;
 
     @Column(name = "post_title")
@@ -23,25 +26,30 @@ public class BlogPost {
     private String postText;
 
     @Column(name = "post_date")
-    private LocalDateTime postDate;
+    private OffsetDateTime postDate;
     @Column(name = "like_count")
     private long thumbsUpCount;
 
     @Column(name = "is_Deleted")
     private boolean isActive;
 
-    public BlogPost() {}
+    public BlogPost() {
+    }
 
     public BlogPost(Publisher publisher, String postTitle, String postText) {
         this.publisher = publisher;
         this.postTitle = postTitle;
         this.postText = postText;
-        this.postDate = LocalDateTime.now();
+        this.postDate = LocalDateTime.now(ZoneId.of("UTC")).atOffset(ZoneOffset.UTC);
         this.isActive = true;
         this.thumbsUpCount = 0;
     }
 
-    public void giveALike(){
+    public boolean isValid(){
+        return publisher != null && postTitle != null && postText != null;
+    }
+
+    public void giveALike() {
         this.thumbsUpCount++;
     }
 
@@ -77,11 +85,11 @@ public class BlogPost {
         this.postText = postText;
     }
 
-    public LocalDateTime getPostDate() {
+    public OffsetDateTime getPostDate() {
         return postDate;
     }
 
-    public void setPostDate(LocalDateTime postDate) {
+    public void setPostDate(OffsetDateTime postDate) {
         this.postDate = postDate;
     }
 
